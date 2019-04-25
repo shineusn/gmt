@@ -1,0 +1,50 @@
+set PS="8.ps"
+set eqfile="lonlatmagdep.txt"
+set aa="aa.txt"
+set bb="bb.txt"
+set cc="cc.txt"
+set tmpa="tmpa.txt"
+set tmpb="tmpb.txt"
+set tmpc="tmpc.txt"
+
+set R=99/105/21/25
+set J=M6i
+gmt set FORMAT_GEO_MAP=ddd:mm:ssF
+gmt set MAP_FRAME_TYPE=plain
+gmt psbasemap -R%R% -J%J% -Bxa1  -Bya1  -BWSen -X2i -Y2i -K > %PS%
+
+gmt pscoast -R%R% -J%J% -G244/243/239 -S167/194/223 -B10f5g10  -Lg85/17.5+c17.5+w800k+f+u+l'比例尺' -K -O >> %PS%
+gmt psxy CN-border-La.dat -R%R% -J%J% -W0.4p,gray50 -K -O >> %PS%
+
+gmt psxy fault2.txt -R%R% -J%J% -W1p,92/167/186 -O -K >>%PS%
+
+gawk "{if(($3>0)&&($3<2)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.10 -G207/191/140 -W0.1p,black  -O -K >> %PS%
+gawk "{if(($3>=2)&&($3<3)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.2 -G178/190/126 -W0.1p,black  -O -K >> %PS%
+gawk "{if(($3>=3)&&($3<4)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.3 -G197/31/31 -W0.1p,black  -O -K >> %PS%
+gawk "{if(($3>=4)&&($3<6)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.35 -G253/218/4 -W0.1p,black    -O -K >> %PS%
+gawk "{if(($3>=6)&&($3<7)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.35 -G0/90/171 -W0.1p,black    -O -K >> %PS%
+
+gmt psmeca fms5.txt -Sa0.6c -C0.1p -Gblack -R -J -K -O >> %PS%
+
+gmt psmeca fmstype.txt -Sa1c -C0.1p -Gblack -R -J -K -O >> %PS%
+
+echo G 0.01i >legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.1 207/191/140  0.1p,black 0.30i 1.0~1.9 >>legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.2 178/190/126  0.1p,black 0.30i 2.0~2.9 >>legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.3 197/31/31    0.1p,black 0.30i 3.0~3.9 >>legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.4 253/218/4    0.1p,black 0.30i 4.0~7.0 >>legend.txt
+gmt pslegend legend.txt -R%R% -J%J%  -K -O --MAP_FRAME_TYPE=plain -DjBL+w1i+l1.2+o0 -F+g255+p0.10p -X5i -Y0.01i -O -K >> %PS%
+
+del aa.txt bb.txt cc.txt blockname gmt.* legend.txt tmp tmpa.txt tmpb.txt tmpc.txt
+gmt psxy -R -J -T -O >>%PS%
+#gmt psconvert %PS% -A -Tg -P -Z 
+
