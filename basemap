@@ -1,0 +1,64 @@
+set PS="base.ps"
+set eqfile="lonlatmagdep.txt"
+
+set R=89/95/41/45
+set J=M5i
+gmt set FORMAT_GEO_MAP=ddd:mm:ssF
+gmt set MAP_FRAME_TYPE=plain
+gmt psbasemap -R%R% -J%J% -Ba1 -BWseN -X2i -Y3i -K > %PS%
+
+gmt pscoast -R%R% -J%J% -G244/243/239 -S167/194/223 -B10f5g10  -Lg85/17.5+c17.5+w800k+f+u+l'比例尺' -K -O >> %PS%
+gmt psxy CN-border-La.dat -R%R% -J%J% -W0.4p,gray50 -K -O >> %PS%
+
+echo 99.1 24.9 (a) | pstext -R%R% -J%J% -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+
+gawk "{if(($3>0)&&($3<2)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.10 -G207/191/140 -W0.1p,black  -O -K >> %PS%
+gawk "{if(($3>=2)&&($3<3)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.2 -G178/190/126 -W0.1p,black  -O -K >> %PS%
+gawk "{if(($3>=3)&&($3<4)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.3 -G197/31/31 -W0.1p,black  -O -K >> %PS%
+gawk "{if(($3>=4)&&($3<6)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.35 -G253/218/4 -W0.1p,black    -O -K >> %PS%
+gawk "{if(($3>=6)&&($3<7)) print $1,$2,$3*0.06}" %eqfile% > tmp
+gmt psxy -R%R% -J%J% tmp -Sc0.35 -G0/90/171 -W0.1p,black    -O -K >> %PS%
+
+gmt psxy fault2.txt -R%R% -J%J% -W1p,92/167/186 -O -K >>%PS%
+
+echo G 0.01i >legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.1 207/191/140  0.1p,black 0.30i 1.0~1.9 >>legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.2 178/190/126  0.1p,black 0.30i 2.0~2.9 >>legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.3 197/31/31    0.1p,black 0.30i 3.0~3.9 >>legend.txt
+echo C 0/0/0 >>legend.txt
+echo S 0.1i c 0.4 253/218/4    0.1p,black 0.30i 4.0~7.0 >>legend.txt
+gmt pslegend legend.txt -R%R% -J%J%  -K -O --MAP_FRAME_TYPE=plain -DjBL+w1i+l1.2+o0 -F+g255+p0.10p -X3.99i -Y0.01i -O -K >> %PS%
+
+gmt set MAP_TICK_LENGTH_SECONDARY 0p
+gmt set FORMAT_DATE_MAP yyyy-mm
+gmt psxy MT.dat -R2009-01-01T07:39:54/2017-10-31T22:37:41/0/7 -JX12.65c/5c -Sb0.005c -Gblack -BSW -Bxa1Y+l"date"   -Bya1+l"ML" -X-4i -Y-2.3i -K -O >> %PS%
+echo 2009-04-11T05:29:21 6.9 (b) | pstext -R2009-01-01T07:39:54/2017-02-08T18:38:14/0/7 -JX12.65c/5c -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+gmt set MAP_TICK_LENGTH_SECONDARY 0p
+gmt set MAP_FRAME_TYPE=plain
+gmt psxy p_trav_time.txt -R0/500/0/160 -JX7c/6.5c -Sc0.1c -G213/26/33 -BSW -Bxa100+l"distance(km)"  -Bya20+l"time(s)"  -X+6i -Y+3.56i -K -O >> %PS%
+gmt psxy s_trav_time.txt -R0/500/0/160 -JX7c/6.5c -Sc0.1c -G0/90/171  -K -O >> %PS%
+echo 25 156 (c) | pstext -R0/500/0/160 -JX7c/6.5c -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+echo 30 140 | psxy -R0/500/0/160 -JX7c/6.5c -Sc0.15c -G213/26/33 -K -O >> %PS%
+echo 60 140 Pg | pstext -R0/500/0/160 -JX7c/6.5c -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+echo 30 120 | psxy -R0/500/0/160 -JX7c/6.5c -Sc0.15c -G0/90/171 -K -O >> %PS%
+echo 60 120 Sg | pstext -R0/500/0/160 -JX7c/6.5c -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+gmt set MAP_TICK_LENGTH_SECONDARY 0p
+gmt set MAP_FRAME_TYPE=plain
+gmt psxy p_trav_time2.txt -R0/500/0/160 -JX7c/6.5c -Sc0.1c -G213/26/33 -BSW -Bxa100+l"distance(km)"  -Bya20+l"time(s)"   -Y-3.52i  -K -O >> %PS%
+gmt psxy s_trav_time2.txt -R0/500/0/160 -JX7c/6.5c -Sc0.1c -G0/90/171  -K -O >> %PS%
+echo 25 156 (d) | pstext -R0/500/0/160 -JX7c/6.5c -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+echo 30 140 | psxy -R0/500/0/160 -JX7c/6.5c -Sc0.15c -G213/26/33 -K -O >> %PS%
+echo 60 140 Pg | pstext -R0/500/0/160 -JX7c/6.5c -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+echo 30 120 | psxy -R0/500/0/160 -JX7c/6.5c -Sc0.15c -G0/90/171 -K -O >> %PS%
+echo 60 120 Sg | pstext -R0/500/0/160 -JX7c/6.5c -F+f12p,40,solid,13/12/12  -K -O >> %PS%
+del gmt.* legend.txt tmp 
+gmt psxy -R -J -T -O >>%PS%
+#gmt psconvert %PS% -A -Tg -P -Z 
+
