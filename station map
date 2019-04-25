@@ -1,0 +1,22 @@
+set PS="fault.ps"
+set R=97.5/106.6/20.5/29
+
+gmt gmtset FORMAT_GEO_MAP=ddd:mm:ssF
+gmt gmtset MAP_FRAME_TYPE=plain
+gmt psbasemap -R%R% -JM6i   -Ba2 -BWseN -Xc -Yc -K > %PS%
+
+gmt psxy CN-border-La.dat -J -R -W0.5p -O -K >> %PS%
+
+gmt psxy fault.txt -J -R -W0.3p,213/26/33 -O -K >>%PS%
+
+gmt psxy station2.dat -J -R -St0.5 -G255/222/0 -K -O >> %PS%
+
+gmt psxy station3.dat -J -R -St0.5 -G0/49/79 -K -O >> %PS%
+
+gmt pstext station3.dat -J -R -F+f10p,40+j -Dj0.15c/0.15c -K -O >> %PS%
+
+gmt psxy yjq.txt -J -R -W2p,0/90/171 -O -K >>%PS%
+
+del blockname gmt.conf gmt.history
+
+gmt psxy -R -J -T -O >>%PS%
