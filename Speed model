@@ -1,0 +1,37 @@
+set PS="speed.ps"
+
+set hn=hn.txt
+set ak135=ak135.txt
+set prem=prem.txt
+
+set R=3.5/8.5/0/50
+set J=X16c/-16c
+gmt set FORMAT_GEO_MAP=ddd:mm:ssF
+gmt set MAP_FRAME_TYPE=plain
+gmt psbasemap -R%R% -J%J% -Bxa1+l"P velocity(km/s)" -Bya10+l"dep(km)" -BWseN -X4i  -K > %PS%
+
+gawk "BEGIN{d1=0;d2=0}{d2=d2+$1;print $2,d1;print $2,d2;d1=d2;}" %hn% > tmp
+gmt psxy -R -J  tmp -W1p,191/31/31 -K -O >> %PS%
+
+gawk "BEGIN{d1=0;d2=0}{d2=d2+$1;print $2,d1;print $2,d2;d1=d2;}" %ak135% > tmp
+gmt psxy -R -J  tmp -W1p,253/218/4 -K -O >> %PS%
+
+gawk "BEGIN{d1=0;d2=0}{d2=d2+$1;print $2,d1;print $2,d2;d1=d2;}" %prem% > tmp
+gmt psxy -R -J  tmp -W1p,6/128/67 -K -O >> %PS%
+
+set Ra=1/5/1/6
+set Ja=M1.1i
+gmt psbasemap -R%Ra% -J%Ja%  -BWSen+gwhite -B0     -K -O --MAP_FRAME_TYPE=plain >> %PS%
+
+gmt psxy ak135tuli.txt -R -J -W1p,253/218/4 -O -K >> %PS%
+echo 3.5 5.1  AK135   | pstext -R -J -F+f12p,40,solid,0/90/171  -K -O >> %PS%
+
+gmt psxy premtuli.txt -R -J -W1p,6/128/67 -O -K >> %PS%
+echo 3.5 3.4  PREM   | pstext -R -J -F+f12p,40,solid,0/90/171  -K -O >> %PS%
+
+gmt psxy hntuli.txt -R -J -W1p,191/31/31 -O -K >> %PS%
+echo 3.5 1.7  H N    | pstext -R -J -F+f12p,40,solid,0/90/171  -K -O >> %PS%
+
+
+del gmt.* legend.txt tmp
+gmt psxy -R -J -T -O >>%PS%
